@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noir Games - Легкие игры</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #0a0a0a;
+            color: #f4d03f;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid #f4d03f;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(244, 208, 63, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .game-card {
+            background-color: #1a1a1a;
+            border: 1px solid #f4d03f;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(244, 208, 63, 0.2);
+        }
+
+        .game-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .game-card p {
+            opacity: 0.8;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        .play-btn {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: transparent;
+            border: 2px solid #f4d03f;
+            color: #f4d03f;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            background-color: #f4d03f;
+            color: #0a0a0a;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid #f4d03f;
+            opacity: 0.7;
+        }
+
+        .shadow-effect {
+            position: relative;
+        }
+
+        .shadow-effect::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #f4d03f, transparent, #f4d03f);
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Noir Games</h1>
+            <p class="subtitle">Легкие игры в стиле нуар</p>
+        </header>
+
+        <main>
+            <div class="games-grid">
+                <div class="game-card shadow-effect">
+                    <h3>Тени города</h3>
+                    <p>Классическая игра в угадайку. Разгадайте загадочное слово в атмосфере ночного города.</p>
+                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
+                </div>
+
+                <div class="game-card shadow-effect">
+                    <h3>Нуарный пазл</h3>
+                    <p>Соберите разрозненные улики в единую картину. Минималистичный пазл в черно-желтых тонах.</p>
+                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
+                </div>
+
+                <div class="game-card shadow-effect">
+                    <h3>Лабиринт теней</h3>
+                    <p>Пройдите через запутанный лабиринт улиц ночного города. Найдите выход из тени.</p>
+                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
+                </div>
+
+                <div class="game-card shadow-effect">
+                    <h3>Карточный детектив</h3>
+                    <p>Простая карточная игра. Соберите комбинации и раскройте дело.</p>
+                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
+                </div>
+
+                <div class="game-card shadow-effect">
+                    <h3>Змейка в ночи</h3>
+                    <p>Классическая змейка переосмысленная в стиле нуар. Собирайте огни фонарей.</p>
+                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
+                </div>
+
+                <div class="game-card shadow-effect">
+                    <h3>Пятнашки</h3>
+                    <p>Вечная классика в новом исполнении. Упорядочьте числа в правильном порядке.</p>
+                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Noir Games. Все права защищены.</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Минимализм • Нуар • Игры</p>
+        </footer>
+    </div>
+</body>
+</html>
