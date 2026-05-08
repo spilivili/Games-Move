@@ -1,184 +1,353 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noir Games - Легкие игры</title>
+    <title>Move Noir Games</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg-color: #050505;
+            --text-color: #f4f4f4;
+            --accent-color: #f4d03f;
+            --secondary-bg: #111111;
+            --border-color: #333;
         }
 
         body {
-            font-family: 'Courier New', monospace;
-            background-color: #0a0a0a;
-            color: #f4d03f;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         header {
-            text-align: center;
-            padding: 40px 0;
-            border-bottom: 2px solid #f4d03f;
-            margin-bottom: 40px;
+            background-color: var(--secondary-bg);
+            padding: 20px;
+            border-bottom: 2px solid var(--accent-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(244, 208, 63, 0.1);
         }
 
-        h1 {
-            font-size: 3em;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            text-shadow: 2px 2px 4px rgba(244, 208, 63, 0.3);
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        .subtitle {
-            font-size: 1.2em;
-            opacity: 0.8;
-            margin-top: 10px;
+        .logo-symbol {
+            width: 50px;
+            height: 50px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 30px;
+            color: var(--bg-color);
+            border: 2px solid var(--text-color);
         }
 
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .game-card {
-            background-color: #1a1a1a;
-            border: 1px solid #f4d03f;
-            padding: 25px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .game-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(244, 208, 63, 0.2);
-        }
-
-        .game-card h3 {
-            font-size: 1.5em;
-            margin-bottom: 15px;
+        .site-title {
+            font-size: 1.5rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            color: var(--accent-color);
+            text-shadow: 2px 2px 0px #000;
         }
 
-        .game-card p {
-            opacity: 0.8;
+        .token-info {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            background: #222;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--accent-color);
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h1, h2 {
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+        }
+
+        .game-section {
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 5px 5px 0px var(--accent-color);
+            position: relative;
+        }
+
+        .game-description {
+            line-height: 1.6;
             margin-bottom: 20px;
-            font-size: 0.95em;
+            font-size: 1.1rem;
         }
 
-        .play-btn {
+        .btn {
             display: inline-block;
-            padding: 10px 25px;
             background-color: transparent;
-            border: 2px solid #f4d03f;
-            color: #f4d03f;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+            padding: 12px 25px;
             text-decoration: none;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            font-weight: bold;
             transition: all 0.3s ease;
+            cursor: pointer;
+            font-family: inherit;
         }
 
-        .play-btn:hover {
-            background-color: #f4d03f;
-            color: #0a0a0a;
+        .btn:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
+        #snake-game-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 20px;
+        }
+
+        canvas {
+            background-color: #000;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 20px rgba(244, 208, 63, 0.2);
+            max-width: 100%;
+        }
+
+        .game-stats {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            color: var(--text-color);
         }
 
         footer {
             text-align: center;
-            padding: 30px 0;
-            border-top: 1px solid #f4d03f;
-            opacity: 0.7;
+            padding: 20px;
+            background-color: var(--secondary-bg);
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            color: #888;
         }
 
-        .shadow-effect {
-            position: relative;
-        }
-
-        .shadow-effect::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #f4d03f, transparent, #f4d03f);
-            z-index: -1;
-            opacity: 0.3;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2em;
-            }
-            
-            .games-grid {
-                grid-template-columns: 1fr;
-            }
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Noir Games</h1>
-            <p class="subtitle">Легкие игры в стиле нуар</p>
-        </header>
 
-        <main>
-            <div class="games-grid">
-                <div class="game-card shadow-effect">
-                    <h3>Тени города</h3>
-                    <p>Классическая игра в угадайку. Разгадайте загадочное слово в атмосфере ночного города.</p>
-                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
-                </div>
-
-                <div class="game-card shadow-effect">
-                    <h3>Нуарный пазл</h3>
-                    <p>Соберите разрозненные улики в единую картину. Минималистичный пазл в черно-желтых тонах.</p>
-                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
-                </div>
-
-                <div class="game-card shadow-effect">
-                    <h3>Лабиринт теней</h3>
-                    <p>Пройдите через запутанный лабиринт улиц ночного города. Найдите выход из тени.</p>
-                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
-                </div>
-
-                <div class="game-card shadow-effect">
-                    <h3>Карточный детектив</h3>
-                    <p>Простая карточная игра. Соберите комбинации и раскройте дело.</p>
-                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
-                </div>
-
-                <div class="game-card shadow-effect">
-                    <h3>Змейка в ночи</h3>
-                    <p>Классическая змейка переосмысленная в стиле нуар. Собирайте огни фонарей.</p>
-                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
-                </div>
-
-                <div class="game-card shadow-effect">
-                    <h3>Пятнашки</h3>
-                    <p>Вечная классика в новом исполнении. Упорядочьте числа в правильном порядке.</p>
-                    <a href="#" class="play-btn" onclick="alert('Игра скоро будет доступна!'); return false;">Играть</a>
-                </div>
-            </div>
-        </main>
-
-        <footer>
-            <p>&copy; 2024 Noir Games. Все права защищены.</p>
-            <p style="margin-top: 10px; font-size: 0.9em;">Минимализм • Нуар • Игры</p>
-        </footer>
+<header>
+    <div class="logo-container">
+        <div class="logo-symbol">M</div>
+        <div class="site-title">Move Noir Games</div>
     </div>
+    <div class="token-info">$MOVE Token</div>
+</header>
+
+<main>
+    <h1>Arcade Protocol</h1>
+
+    <section class="game-section">
+        <h2>MOVE STRIKE</h2>
+        <p class="game-description">
+            Pilot your 2D fighter through the dark skies of the Movement network. 
+            Engage hostile entities, survive waves of enemies, and upgrade your weaponry. 
+            Dominate the leaderboard and secure your place in the chain.
+        </p>
+        <div style="text-align: center;">
+            <button class="btn" onclick="alert('MOVE STRIKE loading sequence initiated... Coming soon.')">Launch Mission</button>
+        </div>
+    </section>
+
+    <section class="game-section">
+        <h2>MOVE SNAKE</h2>
+        <p class="game-description">
+            Navigate the blockchain grid. Consume data blocks to grow your chain. 
+            Avoid collisions and fragmentation. A classic noir reimagined for the Movement ecosystem.
+        </p>
+        <div style="text-align: center;">
+            <button class="btn" id="start-snake-btn">Initialize Chain</button>
+        </div>
+
+        <div id="snake-game-container">
+            <canvas id="snakeCanvas" width="400" height="400"></canvas>
+            <div class="game-stats">Blocks Mined: <span id="score">0</span></div>
+            <button class="btn" id="restart-snake-btn" style="margin-top: 10px; display: none;">Reboot System</button>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>Powered by <a href="https://movement-docs.vercel.app/devs" target="_blank">Movement Network</a></p>
+    <p>&copy; 2024 Move Noir Games. All rights reserved.</p>
+</footer>
+
+<script>
+    const canvas = document.getElementById('snakeCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreElement = document.getElementById('score');
+    const startBtn = document.getElementById('start-snake-btn');
+    const restartBtn = document.getElementById('restart-snake-btn');
+    const gameContainer = document.getElementById('snake-game-container');
+
+    const gridSize = 20;
+    const tileCount = canvas.width / gridSize;
+    
+    let score = 0;
+    let snake = [];
+    let food = {};
+    let dx = 0;
+    let dy = 0;
+    let gameInterval;
+    let isGameRunning = false;
+
+    const COLOR_SNAKE = '#f4d03f';
+    const COLOR_FOOD = '#ffffff';
+    const COLOR_BG = '#000000';
+
+    function initGame() {
+        snake = [{x: 10, y: 10}, {x: 9, y: 10}, {x: 8, y: 10}];
+        score = 0;
+        dx = 1;
+        dy = 0;
+        scoreElement.innerText = score;
+        placeFood();
+        isGameRunning = true;
+        startBtn.style.display = 'none';
+        restartBtn.style.display = 'inline-block';
+        gameContainer.style.display = 'flex';
+        
+        if (gameInterval) clearInterval(gameInterval);
+        gameInterval = setInterval(gameLoop, 100);
+    }
+
+    function placeFood() {
+        food = {
+            x: Math.floor(Math.random() * tileCount),
+            y: Math.floor(Math.random() * tileCount)
+        };
+        for (let part of snake) {
+            if (part.x === food.x && part.y === food.y) {
+                placeFood();
+            }
+        }
+    }
+
+    function gameLoop() {
+        if (!isGameRunning) return;
+
+        const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+        if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+            gameOver();
+            return;
+        }
+
+        for (let part of snake) {
+            if (head.x === part.x && head.y === part.y) {
+                gameOver();
+                return;
+            }
+        }
+
+        snake.unshift(head);
+
+        if (head.x === food.x && head.y === food.y) {
+            score++;
+            scoreElement.innerText = score;
+            placeFood();
+        } else {
+            snake.pop();
+        }
+
+        draw();
+    }
+
+    function draw() {
+        ctx.fillStyle = COLOR_BG;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = '#111';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < tileCount; i++) {
+            ctx.beginPath();
+            ctx.moveTo(i * gridSize, 0);
+            ctx.lineTo(i * gridSize, canvas.height);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, i * gridSize);
+            ctx.lineTo(canvas.width, i * gridSize);
+            ctx.stroke();
+        }
+
+        ctx.fillStyle = COLOR_SNAKE;
+        for (let part of snake) {
+            ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2);
+        }
+
+        ctx.fillStyle = COLOR_FOOD;
+        ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+        ctx.fillStyle = '#000';
+        ctx.font = '12px Courier New';
+        ctx.fillText('$', food.x * gridSize + 5, food.y * gridSize + 15);
+    }
+
+    function gameOver() {
+        isGameRunning = false;
+        clearInterval(gameInterval);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#f4d03f';
+        ctx.font = '30px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('SYSTEM FAILURE', canvas.width / 2, canvas.height / 2);
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = '16px Courier New';
+        ctx.fillText(`Blocks Mined: ${score}`, canvas.width / 2, canvas.height / 2 + 30);
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (!isGameRunning) return;
+        switch(e.key) {
+            case 'ArrowUp': if (dy !== 1) { dx = 0; dy = -1; } break;
+            case 'ArrowDown': if (dy !== -1) { dx = 0; dy = 1; } break;
+            case 'ArrowLeft': if (dx !== 1) { dx = -1; dy = 0; } break;
+            case 'ArrowRight': if (dx !== -1) { dx = 1; dy = 0; } break;
+        }
+    });
+
+    startBtn.addEventListener('click', initGame);
+    restartBtn.addEventListener('click', initGame);
+</script>
+
 </body>
 </html>
