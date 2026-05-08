@@ -7,347 +7,424 @@
     <style>
         :root {
             --bg-color: #050505;
-            --text-color: #f4f4f4;
-            --accent-color: #f4d03f;
-            --secondary-bg: #111111;
-            --border-color: #333;
+            --card-bg: #111111;
+            --text-main: #f4f4f4;
+            --text-muted: #888888;
+            --accent-yellow: #FFD700; /* Bright Yellow for Movement vibe */
+            --border-color: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            padding: 0;
             background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace; /* Noir/Terminal feel */
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-yellow);
+        }
+
+        /* Header */
         header {
-            background-color: var(--secondary-bg);
-            padding: 20px;
-            border-bottom: 2px solid var(--accent-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(244, 208, 63, 0.1);
+            padding: 20px 5%;
+            border-bottom: 1px solid var(--border-color);
+            background-color: rgba(5, 5, 5, 0.95);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .logo-container {
+        .brand {
             display: flex;
             align-items: center;
             gap: 15px;
-        }
-
-        .logo-symbol {
-            width: 50px;
-            height: 50px;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 30px;
-            color: var(--bg-color);
-            border: 2px solid var(--text-color);
-        }
-
-        .site-title {
             font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: -1px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-yellow);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .token-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .token-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 70%);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: var(--accent-color);
-            text-shadow: 2px 2px 0px #000;
         }
 
-        .token-info {
-            font-size: 0.9rem;
-            color: var(--text-color);
-            background: #222;
-            padding: 5px 10px;
-            border-radius: 4px;
-            border: 1px solid var(--accent-color);
+        .hero h1 span {
+            color: var(--accent-yellow);
         }
 
-        main {
-            flex: 1;
-            padding: 40px 20px;
-            max-width: 800px;
+        .hero p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+        }
+
+        /* Games Grid */
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            width: 100%;
-            box-sizing: border-box;
+            padding: 40px 20px;
         }
 
-        h1, h2 {
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+        .section-title {
+            font-size: 1.8rem;
             margin-bottom: 30px;
-            color: var(--accent-color);
+            border-left: 4px solid var(--accent-yellow);
+            padding-left: 15px;
+            text-transform: uppercase;
         }
 
-        .game-section {
-            background-color: var(--secondary-bg);
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .game-card {
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            padding: 30px;
-            margin-bottom: 40px;
-            box-shadow: 5px 5px 0px var(--accent-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
         }
 
-        .game-description {
-            line-height: 1.6;
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.1);
+            border-color: var(--accent-yellow);
+        }
+
+        .game-preview {
+            height: 200px;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Canvas for Snake Game */
+        canvas#snakeCanvas {
+            display: block;
+            background: #000;
+        }
+
+        .game-info {
+            padding: 20px;
+        }
+
+        .game-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--accent-yellow);
+        }
+
+        .game-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
             margin-bottom: 20px;
-            font-size: 1.1rem;
+            min-height: 60px;
         }
 
         .btn {
             display: inline-block;
+            width: 100%;
+            padding: 12px;
             background-color: transparent;
-            color: var(--accent-color);
-            border: 2px solid var(--accent-color);
-            padding: 12px 25px;
-            text-decoration: none;
-            text-transform: uppercase;
+            border: 1px solid var(--accent-yellow);
+            color: var(--accent-yellow);
+            text-align: center;
             font-weight: bold;
-            transition: all 0.3s ease;
+            text-transform: uppercase;
             cursor: pointer;
-            font-family: inherit;
+            transition: all 0.3s ease;
         }
 
         .btn:hover {
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-            box-shadow: 0 0 15px var(--accent-color);
+            background-color: var(--accent-yellow);
+            color: #000;
         }
 
-        #snake-game-container {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-            border-top: 1px dashed var(--border-color);
-            padding-top: 20px;
+        .btn-disabled {
+            border-color: var(--text-muted);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+        .btn-disabled:hover {
+            background-color: transparent;
+            color: var(--text-muted);
         }
 
-        canvas {
-            background-color: #000;
-            border: 2px solid var(--accent-color);
-            box-shadow: 0 0 20px rgba(244, 208, 63, 0.2);
-            max-width: 100%;
-        }
-
-        .game-stats {
-            margin-top: 10px;
-            font-size: 1.2rem;
-            color: var(--text-color);
-        }
-
+        /* Footer */
         footer {
             text-align: center;
-            padding: 20px;
-            background-color: var(--secondary-bg);
+            padding: 40px 20px;
             border-top: 1px solid var(--border-color);
-            font-size: 0.8rem;
-            color: #888;
+            margin-top: 60px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
         footer a {
-            color: var(--accent-color);
-            text-decoration: none;
+            color: var(--accent-yellow);
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo-container">
-        <div class="logo-symbol">M</div>
-        <div class="site-title">Move Noir Games</div>
-    </div>
-    <div class="token-info">$MOVE Token</div>
-</header>
-
-<main>
-    <h1>Arcade Protocol</h1>
-
-    <section class="game-section">
-        <h2>MOVE STRIKE</h2>
-        <p class="game-description">
-            Pilot your 2D fighter through the dark skies of the Movement network. 
-            Engage hostile entities, survive waves of enemies, and upgrade your weaponry. 
-            Dominate the leaderboard and secure your place in the chain.
-        </p>
-        <div style="text-align: center;">
-            <button class="btn" onclick="alert('MOVE STRIKE loading sequence initiated... Coming soon.')">Launch Mission</button>
+    <header>
+        <div class="brand">
+            <!-- Left Logo: Updated Link -->
+            <img src="https://lh3.googleusercontent.com/d/1BinihmfyZa2-TtnnabTvrxKHMBwYKC_C" alt="Logo" class="brand-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSJub25lIiBzdHJva2U9IiNGRkQ3MDAiIHN0cm9rZS13aWR0aD0iNSI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDUiLz48cGF0aCBkPSJNMzAgNzBWNTBMMzUgMzBMNTAgNDBMNjUgMzBMNzAgNTBWNzAiIHN0cm9rZT0iI0ZGRDcwMCIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiIGZpbGw9Im5vbmUiLz48L3N2Zz4='">
+            <span>MOVE NOIR GAMES</span>
         </div>
+        <nav class="nav-links">
+            <a href="https://movement-docs.vercel.app/general" target="_blank">Documentation</a>
+            <div class="token-badge">
+                <!-- Token Icon: Updated Link -->
+                <img src="https://lh3.googleusercontent.com/d/1wKjEpeBf2i-2tFpudJA836ObKZ2xMwjL" alt="$MOVE" class="token-icon" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIgZmlsbD0iI0ZGRDcwMCIvPjx0ZXh0IHg9IjUwIiB5PSI3MCIgZm9udC1zaXplPSI2MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMwMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPk08L3RleHQ+PC9zdmc+'">
+                <span>$MOVE</span>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Welcome to the <span>Shadows</span></h1>
+        <p>Experience the fusion of classic arcade gaming and the Movement Network ecosystem. Minimalist design, maximum intensity.</p>
     </section>
 
-    <section class="game-section">
-        <h2>MOVE SNAKE</h2>
-        <p class="game-description">
-            Navigate the blockchain grid. Consume data blocks to grow your chain. 
-            Avoid collisions and fragmentation. A classic noir reimagined for the Movement ecosystem.
-        </p>
-        <div style="text-align: center;">
-            <button class="btn" id="start-snake-btn">Initialize Chain</button>
-        </div>
-
-        <div id="snake-game-container">
-            <canvas id="snakeCanvas" width="400" height="400"></canvas>
-            <div class="game-stats">Blocks Mined: <span id="score">0</span></div>
-            <button class="btn" id="restart-snake-btn" style="margin-top: 10px; display: none;">Reboot System</button>
-        </div>
-    </section>
-
-</main>
-
-<footer>
-    <p>Powered by <a href="https://movement-docs.vercel.app/devs" target="_blank">Movement Network</a></p>
-    <p>&copy; 2024 Move Noir Games. All rights reserved.</p>
-</footer>
-
-<script>
-    const canvas = document.getElementById('snakeCanvas');
-    const ctx = canvas.getContext('2d');
-    const scoreElement = document.getElementById('score');
-    const startBtn = document.getElementById('start-snake-btn');
-    const restartBtn = document.getElementById('restart-snake-btn');
-    const gameContainer = document.getElementById('snake-game-container');
-
-    const gridSize = 20;
-    const tileCount = canvas.width / gridSize;
-    
-    let score = 0;
-    let snake = [];
-    let food = {};
-    let dx = 0;
-    let dy = 0;
-    let gameInterval;
-    let isGameRunning = false;
-
-    const COLOR_SNAKE = '#f4d03f';
-    const COLOR_FOOD = '#ffffff';
-    const COLOR_BG = '#000000';
-
-    function initGame() {
-        snake = [{x: 10, y: 10}, {x: 9, y: 10}, {x: 8, y: 10}];
-        score = 0;
-        dx = 1;
-        dy = 0;
-        scoreElement.innerText = score;
-        placeFood();
-        isGameRunning = true;
-        startBtn.style.display = 'none';
-        restartBtn.style.display = 'inline-block';
-        gameContainer.style.display = 'flex';
+    <div class="container">
+        <h2 class="section-title">Movement Arcade</h2>
         
-        if (gameInterval) clearInterval(gameInterval);
-        gameInterval = setInterval(gameLoop, 100);
-    }
+        <div class="games-grid">
+            
+            <!-- Game 1: Move Snake (Playable) -->
+            <div class="game-card">
+                <div class="game-preview">
+                    <canvas id="snakeCanvas" width="300" height="200"></canvas>
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">Move Snake</h3>
+                    <p class="game-desc">Navigate the blockchain grid. Consume blocks to grow your chain. Don't crash into the void.</p>
+                    <button class="btn" onclick="startSnake()">Play Now</button>
+                </div>
+            </div>
 
-    function placeFood() {
-        food = {
-            x: Math.floor(Math.random() * tileCount),
-            y: Math.floor(Math.random() * tileCount)
-        };
-        for (let part of snake) {
-            if (part.x === food.x && part.y === food.y) {
-                placeFood();
+            <!-- Game 2: Move Strike (Placeholder) -->
+            <div class="game-card">
+                <div class="game-preview" style="background: linear-gradient(45deg, #111, #222);">
+                    <div style="text-align:center; color: #444;">
+                        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                        <p style="margin-top:10px; font-size:0.8rem;">COMING SOON</p>
+                    </div>
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">MOVE STRIKE</h3>
+                    <p class="game-desc">Pilot your 2D fighter through enemy waves. Upgrade your arsenal and dominate the skies in this high-octane shooter.</p>
+                    <button class="btn btn-disabled">Launch Pending</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>Powered by <a href="https://x.com/Yannn1993" target="_blank">Spilivili</a></p>
+        <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.6;">&copy; 2024 Move Noir Games. Built on Movement.</p>
+    </footer>
+
+    <script>
+        // Simple Snake Game Logic
+        const canvas = document.getElementById('snakeCanvas');
+        const ctx = canvas.getContext('2d');
+        const box = 20; // Size of one square
+        let snake = [];
+        let food = {};
+        let score = 0;
+        let d;
+        let game;
+        let isGameRunning = false;
+
+        function initSnake() {
+            snake = [];
+            snake[0] = { x: 9 * box, y: 10 * box };
+            food = {
+                x: Math.floor(Math.random() * 15) * box,
+                y: Math.floor(Math.random() * 10) * box
+            };
+            score = 0;
+            d = undefined;
+            drawSnake();
+        }
+
+        function drawSnake() {
+            // Clear background
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Grid (Noir style)
+            ctx.strokeStyle = "#1a1a1a";
+            for(let i=0; i<canvas.width; i+=box) {
+                ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i, canvas.height); ctx.stroke();
             }
+            for(let i=0; i<canvas.height; i+=box) {
+                ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(canvas.width, i); ctx.stroke();
+            }
+
+            // Draw Snake
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = (i == 0) ? "#FFD700" : "#cccc00"; // Head is bright yellow
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                
+                ctx.strokeStyle = "#000";
+                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+            }
+
+            // Draw Food (Token style)
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.arc(food.x + box/2, food.y + box/2, box/3, 0, 2*Math.PI);
+            ctx.fill();
+
+            // Score
+            ctx.fillStyle = "#fff";
+            ctx.font = "12px Courier New";
+            ctx.fillText("Blocks: " + score, 10, 20);
         }
-    }
 
-    function gameLoop() {
-        if (!isGameRunning) return;
-
-        const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-
-        if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-            gameOver();
-            return;
+        function control(event) {
+            if (event.keyCode == 37 && d != "RIGHT") d = "LEFT";
+            else if (event.keyCode == 38 && d != "DOWN") d = "UP";
+            else if (event.keyCode == 39 && d != "LEFT") d = "RIGHT";
+            else if (event.keyCode == 40 && d != "UP") d = "DOWN";
         }
 
-        for (let part of snake) {
-            if (head.x === part.x && head.y === part.y) {
-                gameOver();
+        function update() {
+            if(!isGameRunning) return;
+
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+
+            if (d == "LEFT") snakeX -= box;
+            if (d == "UP") snakeY -= box;
+            if (d == "RIGHT") snakeX += box;
+            if (d == "DOWN") snakeY += box;
+
+            // If snake eats food
+            if (snakeX == food.x && snakeY == food.y) {
+                score++;
+                food = {
+                    x: Math.floor(Math.random() * 15) * box,
+                    y: Math.floor(Math.random() * 10) * box
+                };
+            } else {
+                snake.pop(); // Remove tail
+            }
+
+            // Collision detection
+            if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(snakeX, snakeY, snake)) {
+                clearInterval(game);
+                isGameRunning = false;
+                alert("Game Over! Blocks mined: " + score);
+                document.removeEventListener("keydown", control);
                 return;
             }
+
+            let newHead = { x: snakeX, y: snakeY };
+            snake.unshift(newHead);
+
+            drawSnake();
         }
 
-        snake.unshift(head);
-
-        if (head.x === food.x && head.y === food.y) {
-            score++;
-            scoreElement.innerText = score;
-            placeFood();
-        } else {
-            snake.pop();
+        function collision(x, y, array) {
+            for (let i = 0; i < array.length; i++) {
+                if (x == array[i].x && y == array[i].y) return true;
+            }
+            return false;
         }
 
-        draw();
-    }
-
-    function draw() {
-        ctx.fillStyle = COLOR_BG;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.strokeStyle = '#111';
-        ctx.lineWidth = 1;
-        for (let i = 0; i < tileCount; i++) {
-            ctx.beginPath();
-            ctx.moveTo(i * gridSize, 0);
-            ctx.lineTo(i * gridSize, canvas.height);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(0, i * gridSize);
-            ctx.lineTo(canvas.width, i * gridSize);
-            ctx.stroke();
+        function startSnake() {
+            if(isGameRunning) return;
+            isGameRunning = true;
+            initSnake();
+            document.addEventListener("keydown", control);
+            game = setInterval(update, 150); // Speed
         }
 
-        ctx.fillStyle = COLOR_SNAKE;
-        for (let part of snake) {
-            ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2);
-        }
-
-        ctx.fillStyle = COLOR_FOOD;
-        ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
-        ctx.fillStyle = '#000';
-        ctx.font = '12px Courier New';
-        ctx.fillText('$', food.x * gridSize + 5, food.y * gridSize + 15);
-    }
-
-    function gameOver() {
-        isGameRunning = false;
-        clearInterval(gameInterval);
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.fillStyle = '#f4d03f';
-        ctx.font = '30px Courier New';
-        ctx.textAlign = 'center';
-        ctx.fillText('SYSTEM FAILURE', canvas.width / 2, canvas.height / 2);
-        
-        ctx.fillStyle = '#fff';
-        ctx.font = '16px Courier New';
-        ctx.fillText(`Blocks Mined: ${score}`, canvas.width / 2, canvas.height / 2 + 30);
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (!isGameRunning) return;
-        switch(e.key) {
-            case 'ArrowUp': if (dy !== 1) { dx = 0; dy = -1; } break;
-            case 'ArrowDown': if (dy !== -1) { dx = 0; dy = 1; } break;
-            case 'ArrowLeft': if (dx !== 1) { dx = -1; dy = 0; } break;
-            case 'ArrowRight': if (dx !== -1) { dx = 1; dy = 0; } break;
-        }
-    });
-
-    startBtn.addEventListener('click', initGame);
-    restartBtn.addEventListener('click', initGame);
-</script>
-
+        // Initialize visual on load
+        initSnake();
+    </script>
 </body>
 </html>
