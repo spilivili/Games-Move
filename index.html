@@ -1,1154 +1,146 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Move Noir Games</title>
-    <style>
-        :root {
-            --bg-color: #050505;
-            --text-color: #f4d03f;
-            --accent-color: #f4d03f;
-            --secondary-text: #aaaaaa;
-            --card-bg: #111111;
-        }
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Movement: Black Run — браузерный нуар-шутер в жёлто-чёрном стиле сети Movement."
+    />
+    <title>Movement: Black Run</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-noise" aria-hidden="true"></div>
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Courier New', Courier, monospace;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+    <main class="game-shell">
+      <section class="game-panel" aria-label="Movement: Black Run">
+        <div class="topbar">
+          <div>
+            <p class="kicker">Games Move представляет</p>
+            <h1>Movement: Black Run</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="ghost-button" id="pauseButton" type="button">Пауза</button>
+            <button class="primary-button" id="settingsButton" type="button">Меню</button>
+          </div>
+        </div>
 
-        /* Header */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 5%;
-            border-bottom: 1px solid #333;
-            background: rgba(5, 5, 5, 0.95);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        <div class="canvas-wrap">
+          <canvas id="gameCanvas" width="960" height="540" aria-label="Игровое поле Movement: Black Run"></canvas>
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-img {
-            height: 40px;
-            width: auto;
-            border-radius: 50%;
-            border: 1px solid var(--accent-color);
-        }
-
-        .site-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(244, 208, 63, 0.3);
-        }
-
-        .token-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: var(--text-color);
-            border: 1px solid var(--accent-color);
-            padding: 5px 15px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .token-link:hover {
-            background: var(--accent-color);
-            color: var(--bg-color);
-            box-shadow: 0 0 15px rgba(244, 208, 63, 0.5);
-        }
-
-        .token-icon {
-            height: 24px;
-            width: auto;
-        }
-
-        /* Main Content */
-        main {
-            flex: 1;
-            padding: 40px 5%;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        h1, h2 {
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-
-        h1 { margin-bottom: 10px; }
-        .subtitle {
-            text-align: center;
-            color: var(--secondary-text);
-            margin-bottom: 50px;
-            font-size: 0.9rem;
-        }
-        .subtitle a { color: var(--accent-color); text-decoration: none; border-bottom: 1px dotted var(--accent-color); }
-
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .game-card {
-            background: var(--card-bg);
-            border: 1px solid #333;
-            border-radius: 4px;
-            padding: 20px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .game-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(244, 208, 63, 0.15);
-            border-color: var(--accent-color);
-        }
-
-        .game-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.5s;
-        }
-
-        .game-card:hover::before {
-            transform: translateX(100%);
-        }
-
-        .game-title {
-            font-size: 1.4rem;
-            margin: 0 0 10px 0;
-            color: var(--accent-color);
-        }
-
-        .game-desc {
-            color: var(--secondary-text);
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
-
-        .play-btn {
-            background: transparent;
-            color: var(--accent-color);
-            border: 1px solid var(--accent-color);
-            padding: 12px;
-            width: 100%;
-            cursor: pointer;
-            font-family: inherit;
-            text-transform: uppercase;
-            font-weight: bold;
-            transition: all 0.3s;
-            text-align: center;
-            text-decoration: none;
-            display: block;
-            box-sizing: border-box;
-        }
-
-        .play-btn:hover {
-            background: var(--accent-color);
-            color: var(--bg-color);
-            box-shadow: 0 0 15px rgba(244, 208, 63, 0.4);
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 30px;
-            border-top: 1px solid #333;
-            color: var(--secondary-text);
-            font-size: 0.8rem;
-            margin-top: auto;
-        }
-        
-        footer a { color: var(--accent-color); text-decoration: none; }
-
-        /* Game Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: #111;
-            border: 2px solid var(--accent-color);
-            width: 90%;
-            max-width: 800px;
-            padding: 0;
-            position: relative;
-            box-shadow: 0 0 30px rgba(244, 208, 63, 0.2);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #333;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #0a0a0a;
-        }
-
-        .modal-title {
-            margin: 0;
-            font-size: 1.2rem;
-            color: var(--accent-color);
-            text-transform: uppercase;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--secondary-text);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        .close-modal:hover { color: #fff; }
-
-        .modal-body {
-            padding: 20px;
-            position: relative;
-            min-height: 400px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #000;
-            overflow: hidden;
-        }
-
-        /* Settings Panel */
-        .settings-panel {
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            color: var(--text-color);
-        }
-
-        .settings-panel h3 {
-            border-bottom: 1px solid var(--accent-color);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: var(--secondary-text);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            background: #222;
-            border: 1px solid #444;
-            color: var(--text-color);
-            font-family: inherit;
-            box-sizing: border-box;
-        }
-        .form-control:focus { outline: none; border-color: var(--accent-color); }
-
-        .range-slider {
-            width: 100%;
-            accent-color: var(--accent-color);
-        }
-
-        .btn-start {
-            background: var(--accent-color);
-            color: #000;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            transition: transform 0.2s;
-        }
-        .btn-start:hover { transform: scale(1.02); }
-
-        /* Game Canvas Container */
-        #game-container {
-            display: none;
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        canvas {
-            display: block;
-            margin: 0 auto;
-            background: #050505;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-
-        .game-ui {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            display: flex;
-            justify-content: space-between;
-            pointer-events: none;
-            color: #fff;
-            font-size: 0.9rem;
-            text-shadow: 1px 1px 2px #000;
-        }
-
-        .pause-btn {
-            pointer-events: auto;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid #fff;
-            color: #fff;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        /* Mobile Controls */
-        .mobile-controls {
-            display: none;
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            width: 100%;
-            justify-content: space-between;
-            padding: 0 20px;
-            box-sizing: border-box;
-            pointer-events: auto;
-        }
-        
-        @media (max-width: 768px) {
-            .mobile-controls { display: flex; }
-            .d-pad {
-                display: grid;
-                grid-template-columns: repeat(3, 40px);
-                grid-template-rows: repeat(2, 40px);
-                gap: 5px;
-            }
-            .ctrl-btn {
-                width: 40px; height: 40px;
-                background: rgba(244, 208, 63, 0.2);
-                border: 1px solid var(--accent-color);
-                color: var(--accent-color);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.2rem;
-                user-select: none;
-                touch-action: manipulation;
-            }
-            .ctrl-btn:active { background: var(--accent-color); color: #000; }
-            .btn-up { grid-column: 2; grid-row: 1; }
-            .btn-left { grid-column: 1; grid-row: 2; }
-            .btn-down { grid-column: 2; grid-row: 2; }
-            .btn-right { grid-column: 3; grid-row: 2; }
-            
-            .action-btn {
-                width: 60px; height: 60px;
-                background: rgba(244, 208, 63, 0.3);
-                border: 2px solid var(--accent-color);
-                border-radius: 50%;
-                color: var(--accent-color);
-                font-weight: bold;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                user-select: none;
-            }
-            .action-btn:active { background: var(--accent-color); color: #000; }
-        }
-
-        /* Scanlines Effect */
-        .scanlines {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 10;
-            opacity: 0.3;
-        }
-    </style>
-</head>
-<body>
-
-<header>
-    <div class="logo-container">
-        <!-- Left Logo -->
-        <img src="https://drive.google.com/uc?export=view&id=1BinihmfyZa2-TtnnabTvrxKHMBwYKC_C" alt="Logo" class="logo-img" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgZmlsbD0iI2Y0ZDAzZiIvPjx0ZXh0IHg9IjUwIiB5PSI2NSIgZm9udC1zaXplPSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzAwMCIgZm9udC1mYW1pbHk9ImFyaWFsIiBmb250LXdlaWdodD0iYm9sZCI+TTwvdGV4dD48L3N2Zz4='">
-        <div class="site-title">Move Noir Games</div>
-    </div>
-    
-    <!-- Right Token Link -->
-    <a href="https://drive.google.com/drive/folders/1wKjEpeBf2i-2tFpudJA836ObKZ2xMwjL" target="_blank" class="token-link">
-        <img src="https://drive.google.com/uc?export=view&id=1BinihmfyZa2-TtnnabTvrxKHMBwYKC_C" alt="$MOVE" class="token-icon" onerror="this.style.display='none'">
-        <span>$MOVE Token</span>
-    </a>
-</header>
-
-<main>
-    <h1>Movement Arcade</h1>
-    <p class="subtitle">
-        Explore the docs: <a href="https://movement-docs.vercel.app/general" target="_blank">Movement Documentation</a>
-    </p>
-
-    <div class="games-grid">
-        <!-- Move Snake Card -->
-        <div class="game-card">
-            <h2 class="game-title">Move Snake</h2>
-            <p class="game-desc">
-                A classic noir-style snake game reimagined for the Movement network. Collect data blocks, avoid system crashes, and climb the leaderboard. Full audio-visual immersion with customizable settings.
+          <div class="start-screen" id="startScreen">
+            <p class="kicker">жёлтый свет против чёрного неба</p>
+            <h2>Выживи в воздушном коридоре Movement</h2>
+            <p>
+              Сбивай «Стервятников», уворачивайся от «Молний», собирай круги M и
+              прокачивай оружие. Зелёный M даёт XP до 5, белый M усиливает урон,
+              жёлтый M меняет тип оружия.
             </p>
-            <button class="play-btn" onclick="openGame('snake')">Play Now</button>
+            <button class="primary-button large" id="startButton" type="button">Начать вылет</button>
+          </div>
+
+          <div class="game-over" id="gameOver" hidden>
+            <p class="kicker">сигнал потерян</p>
+            <h2>Город снова погас</h2>
+            <p id="finalScore">Счёт: 0</p>
+            <button class="primary-button large" id="restartButton" type="button">Новый вылет</button>
+          </div>
         </div>
 
-        <!-- Move Strike Card -->
-        <div class="game-card" onclick="openGame('strike')">
-            <h2 class="game-title">Move Strike</h2>
-            <p class="game-desc">
-                Pilot a 2D fighter jet through enemy territory. Upgrade your weapons, dodge missiles, and dominate the skies.
-            </p>
-            <button class="play-btn">PLAY NOW</button>
+        <div class="hud" aria-label="Показатели игры">
+          <div><span>Пилот</span><strong id="pilotName">Runner</strong></div>
+          <div><span>Очки</span><strong id="scoreValue">0</strong></div>
+          <div><span>Оружие</span><strong id="weaponValue">Vulture Splitter</strong></div>
+          <div><span>XP</span><strong id="xpValue">0 / 5</strong></div>
+          <div><span>Урон</span><strong id="damageValue">1</strong></div>
         </div>
-    </div>
-</main>
+      </section>
 
-<footer>
-    <p>&copy; 2026 Move Noir Games. Built on Movement.</p>
-    <p>Powered by <a href="https://x.com/Yannn1993" target="_blank">Spilivili</a></p>
-</footer>
-
-<!-- Game Modal -->
-<div class="modal-overlay" id="gameModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 class="modal-title" id="modalTitle">Game System</h3>
-            <button class="close-modal" onclick="closeGame()">&times;</button>
+      <aside class="side-panel" aria-label="Справка по игре">
+        <div class="brand-card">
+          <span class="logo-mark">M</span>
+          <div>
+            <p class="kicker">Network callsign</p>
+            <h2>Move is for Money</h2>
+          </div>
         </div>
-        <div class="modal-body" id="modalBody">
-            <!-- Settings View -->
-            <div class="settings-panel" id="settingsPanel">
-                <h3>Pilot Configuration</h3>
-                
-                <div class="form-group">
-                    <label>Callsign (Login)</label>
-                    <input type="text" id="pilotName" class="form-control" placeholder="Enter your callsign..." maxlength="12">
-                </div>
 
-                <div class="form-group">
-                    <label>Audio Effects Volume</label>
-                    <input type="range" id="sfxVol" class="range-slider" min="0" max="100" value="70">
-                </div>
+        <section>
+          <h3>Апгрейды M</h3>
+          <ul class="legend-list">
+            <li><span class="token yellow-token">M</span> жёлтый — меняет оружие</li>
+            <li><span class="token white-token">M</span> белый — добавляет урон</li>
+            <li><span class="token green-token">M</span> зелёный — +1 XP, максимум 5</li>
+          </ul>
+        </section>
 
-                <div class="form-group">
-                    <label>Music Volume</label>
-                    <input type="range" id="musicVol" class="range-slider" min="0" max="100" value="50">
-                </div>
+        <section>
+          <h3>Враги</h3>
+          <ul class="enemy-list">
+            <li><strong>Стервятник</strong> — ряды лёгких угловатых истребителей.</li>
+            <li><strong>Жёлтая молния</strong> — быстрый зигзаг с режущим следом.</li>
+            <li><strong>Монолит</strong> — тяжёлый танк с 4 HP и жёлтыми трещинами.</li>
+            <li><strong>Триада</strong> — бомбер с тремя пульсирующими пушками.</li>
+            <li><strong>Призрак</strong> — полупрозрачное крыло с тонким контуром.</li>
+          </ul>
+        </section>
 
-                <div class="form-group">
-                    <label>Display Mode</label>
-                    <select id="displayMode" class="form-control">
-                        <option value="window">Windowed (800x600)</option>
-                        <option value="fullscreen">Full Screen</option>
-                    </select>
-                </div>
+        <p class="hint">
+          В меню можно сменить имя, раскладку, громкость музыки и эффектов. Звуки
+          сделаны синтезатором в духе космической аркады — без сторонних аудиофайлов.
+        </p>
+      </aside>
+    </main>
 
-                <button class="btn-start" onclick="startGame()">Initialize System</button>
-            </div>
-
-            <!-- Game Canvas View -->
-            <div id="game-container">
-                <div class="scanlines"></div>
-                <div class="game-ui">
-                    <span id="scoreDisplay">Score: 0</span>
-                    <span id="pilotDisplay">Pilot: Guest</span>
-                    <button class="pause-btn" onclick="togglePause()">PAUSE</button>
-                </div>
-                <canvas id="gameCanvas"></canvas>
-                
-                <!-- Mobile Controls -->
-                <div class="mobile-controls">
-                    <div class="d-pad">
-                        <div class="ctrl-btn btn-up" ontouchstart="handleTouch('up')" ontouchend="handleTouchEnd()">▲</div>
-                        <div class="ctrl-btn btn-left" ontouchstart="handleTouch('left')" ontouchend="handleTouchEnd()">◀</div>
-                        <div class="ctrl-btn btn-down" ontouchstart="handleTouch('down')" ontouchend="handleTouchEnd()">▼</div>
-                        <div class="ctrl-btn btn-right" ontouchstart="handleTouch('right')" ontouchend="handleTouchEnd()">▶</div>
-                    </div>
-                    <div class="action-btn" ontouchstart="togglePause()">II</div>
-                </div>
-            </div>
+    <dialog class="settings-modal" id="settingsModal" aria-labelledby="settingsTitle">
+      <form method="dialog" class="settings-card">
+        <div class="settings-head">
+          <div>
+            <p class="kicker">настройки вылета</p>
+            <h2 id="settingsTitle">Меню пилота</h2>
+          </div>
+          <button class="icon-button" value="close" aria-label="Закрыть меню">×</button>
         </div>
-    </div>
-</div>
 
-<script>
-    // Game State
-    let gameState = {
-        running: false,
-        paused: false,
-        score: 0,
-        pilot: 'Guest',
-        sfxVol: 0.7,
-        musicVol: 0.5,
-        fullscreen: false
-    };
+        <label class="field">
+          Имя профиля
+          <input id="profileNameInput" maxlength="18" autocomplete="nickname" />
+        </label>
 
-    let animationFrameId;
-    let lastTime = 0;
-    let snake = [];
-    let food = {};
-    let direction = 'right';
-    let nextDirection = 'right';
-    let speed = 150; // ms per move
-    let lastMoveTime = 0;
-    
-    // Audio Context
-    let audioCtx;
-    let bgmOscillators = [];
-    let isAudioInit = false;
+        <label class="field">
+          Раскладка управления
+          <select id="controlSchemeSelect">
+            <option value="wasd">WASD + Space</option>
+            <option value="arrows">Стрелки + Space</option>
+            <option value="mouse">Мышь + ЛКМ</option>
+          </select>
+        </label>
 
-    // DOM Elements
-    const modal = document.getElementById('gameModal');
-    const settingsPanel = document.getElementById('settingsPanel');
-    const gameContainer = document.getElementById('game-container');
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const scoreEl = document.getElementById('scoreDisplay');
-    const pilotEl = document.getElementById('pilotDisplay');
+        <label class="range-field">
+          <span>Музыка</span>
+          <input id="musicVolumeInput" type="range" min="0" max="100" value="45" />
+          <strong id="musicVolumeLabel">45%</strong>
+        </label>
 
-    function openGame(gameType) {
-        if(gameType === 'snake') {
-            document.getElementById('modalTitle').innerText = 'Move Snake v1.0';
-            modal.style.display = 'flex';
-            resetSettings();
-        } else if(gameType === 'strike') {
-            // Load Strike Game Code
-            loadStrikeGame();
-        }
-    }
+        <label class="range-field">
+          <span>Эффекты</span>
+          <input id="sfxVolumeInput" type="range" min="0" max="100" value="70" />
+          <strong id="sfxVolumeLabel">70%</strong>
+        </label>
 
-    function loadStrikeGame() {
-        document.getElementById('modalTitle').innerText = 'MOVE STRIKE';
-        modal.style.display = 'flex';
-        resetSettings();
-        // Override startGame for Strike
-        window.currentGame = 'strike';
-    }
+        <div class="toggle-row">
+          <label><input id="musicMuteInput" type="checkbox" /> Выключить музыку</label>
+          <label><input id="sfxMuteInput" type="checkbox" /> Выключить эффекты</label>
+        </div>
 
-    function closeGame() {
-        stopGame();
-        modal.style.display = 'none';
-    }
+        <div class="settings-actions">
+          <button class="ghost-button" id="resetButton" type="button">Сбросить прогресс</button>
+          <button class="primary-button" value="close">Готово</button>
+        </div>
+      </form>
+    </dialog>
 
-    function resetSettings() {
-        settingsPanel.style.display = 'block';
-        gameContainer.style.display = 'none';
-        document.getElementById('pilotName').value = '';
-        document.getElementById('sfxVol').value = 70;
-        document.getElementById('musicVol').value = 50;
-        document.getElementById('displayMode').value = 'window';
-    }
-
-    function startGame() {
-        // Get Settings
-        const nameInput = document.getElementById('pilotName').value.trim();
-        gameState.pilot = nameInput || 'Anonymous';
-        gameState.sfxVol = document.getElementById('sfxVol').value / 100;
-        gameState.musicVol = document.getElementById('musicVol').value / 100;
-        const mode = document.getElementById('displayMode').value;
-        gameState.fullscreen = (mode === 'fullscreen');
-
-        // UI Switch
-        settingsPanel.style.display = 'none';
-        gameContainer.style.display = 'block';
-        pilotEl.innerText = `Pilot: ${gameState.pilot}`;
-
-        // Init Audio
-        initAudio();
-
-        // Setup Canvas
-        if (gameState.fullscreen) {
-            canvas.width = window.innerWidth - 40;
-            canvas.height = window.innerHeight - 100;
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(e => console.log(e));
-            }
-        } else {
-            canvas.width = 800;
-            canvas.height = 600;
-        }
-
-        // Init Game Logic
-        if (window.currentGame === 'strike') {
-            initStrikeGame();
-        } else {
-            initSnakeGame();
-        }
-        
-        gameState.running = true;
-        gameState.paused = false;
-        lastTime = performance.now();
-        requestAnimationFrame(gameLoop);
-        
-        playStartSound();
-        startBackgroundMusic();
-    }
-
-    function stopGame() {
-        gameState.running = false;
-        cancelAnimationFrame(animationFrameId);
-        stopBackgroundMusic();
-        if (document.fullscreenElement) {
-            document.exitFullscreen().catch(e => console.log(e));
-        }
-    }
-
-    function togglePause() {
-        if (!gameState.running) return;
-        gameState.paused = !gameState.paused;
-        if (!gameState.paused) {
-            lastTime = performance.now();
-            requestAnimationFrame(gameLoop);
-        } else {
-            playPauseSound();
-        }
-    }
-
-    // --- Snake Game Logic ---
-
-    function initSnakeGame() {
-        const gridSize = 20;
-        const cols = Math.floor(canvas.width / gridSize);
-        const rows = Math.floor(canvas.height / gridSize);
-        
-        snake = [
-            {x: Math.floor(cols/2), y: Math.floor(rows/2)},
-            {x: Math.floor(cols/2)-1, y: Math.floor(rows/2)},
-            {x: Math.floor(cols/2)-2, y: Math.floor(rows/2)}
-        ];
-        direction = 'right';
-        nextDirection = 'right';
-        gameState.score = 0;
-        scoreEl.innerText = `Score: 0`;
-        spawnFood(gridSize, cols, rows);
-    }
-
-    function spawnFood(gridSize, cols, rows) {
-        let valid = false;
-        while(!valid) {
-            food = {
-                x: Math.floor(Math.random() * cols),
-                y: Math.floor(Math.random() * rows)
-            };
-            valid = !snake.some(segment => segment.x === food.x && segment.y === food.y);
-        }
-    }
-
-    function gameLoop(currentTime) {
-        if (!gameState.running) return;
-        if (gameState.paused) {
-            animationFrameId = requestAnimationFrame(gameLoop);
-            return;
-        }
-
-        const deltaTime = currentTime - lastTime;
-        lastTime = currentTime;
-
-        if (currentTime - lastMoveTime > speed) {
-            updateSnake();
-            lastMoveTime = currentTime;
-        }
-
-        drawSnake();
-        animationFrameId = requestAnimationFrame(gameLoop);
-    }
-
-    function updateSnake() {
-        direction = nextDirection;
-        const head = { ...snake[0] };
-        const gridSize = 20; // logical grid size for calculation, drawn scaled
-        
-        // Calculate grid dimensions based on current canvas
-        const cols = Math.floor(canvas.width / gridSize);
-        const rows = Math.floor(canvas.height / gridSize);
-
-        if (direction === 'right') head.x++;
-        if (direction === 'left') head.x--;
-        if (direction === 'up') head.y--;
-        if (direction === 'down') head.y++;
-
-        // Wall Collision (Wrap around or Die? Let's Die for Noir style)
-        if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) {
-            gameOver();
-            return;
-        }
-
-        // Self Collision
-        if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
-            gameOver();
-            return;
-        }
-
-        snake.unshift(head);
-
-        // Eat Food
-        if (head.x === food.x && head.y === food.y) {
-            gameState.score += 10;
-            scoreEl.innerText = `Score: ${gameState.score}`;
-            playEatSound();
-            spawnFood(gridSize, cols, rows);
-            // Speed up slightly
-            if(speed > 50) speed -= 2;
-        } else {
-            snake.pop();
-        }
-    }
-
-    function drawSnake() {
-        // Clear
-        ctx.fillStyle = '#050505';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Draw Grid (Subtle)
-        ctx.strokeStyle = '#1a1a1a';
-        ctx.lineWidth = 1;
-        const gridSize = 20;
-        for(let x=0; x<canvas.width; x+=gridSize) {
-            ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke();
-        }
-        for(let y=0; y<canvas.height; y+=gridSize) {
-            ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke();
-        }
-
-        // Draw Food
-        ctx.fillStyle = '#f4d03f';
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = '#f4d03f';
-        ctx.fillRect(food.x * gridSize + 2, food.y * gridSize + 2, gridSize - 4, gridSize - 4);
-        ctx.shadowBlur = 0;
-
-        // Draw Snake
-        ctx.fillStyle = '#fff';
-        snake.forEach((seg, index) => {
-            if(index === 0) ctx.fillStyle = '#f4d03f'; // Head
-            else ctx.fillStyle = '#ccc';
-            
-            ctx.fillRect(seg.x * gridSize + 1, seg.y * gridSize + 1, gridSize - 2, gridSize - 2);
-        });
-    }
-
-    function gameOver() {
-        gameState.running = false;
-        playDieSound();
-        stopBackgroundMusic();
-        
-        ctx.fillStyle = 'rgba(0,0,0,0.7)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.fillStyle = '#f4d03f';
-        ctx.font = '40px Courier New';
-        ctx.textAlign = 'center';
-        ctx.fillText('SYSTEM FAILURE', canvas.width/2, canvas.height/2 - 20);
-        
-        ctx.fillStyle = '#fff';
-        ctx.font = '20px Courier New';
-        ctx.fillText(`Final Score: ${gameState.score}`, canvas.width/2, canvas.height/2 + 20);
-        ctx.fillText('Click Close to Restart', canvas.width/2, canvas.height/2 + 50);
-    }
-
-    // --- Input Handling ---
-    document.addEventListener('keydown', (e) => {
-        if (!gameState.running || gameState.paused) return;
-        
-        switch(e.key) {
-            case 'ArrowUp': if(direction !== 'down') nextDirection = 'up'; break;
-            case 'ArrowDown': if(direction !== 'up') nextDirection = 'down'; break;
-            case 'ArrowLeft': if(direction !== 'right') nextDirection = 'left'; break;
-            case 'ArrowRight': if(direction !== 'left') nextDirection = 'right'; break;
-            case ' ': togglePause(); break;
-        }
-    });
-
-    // Touch handling for mobile
-    window.handleTouch = (dir) => {
-        if (!gameState.running || gameState.paused) return;
-        if(dir === 'up' && direction !== 'down') nextDirection = 'up';
-        if(dir === 'down' && direction !== 'up') nextDirection = 'down';
-        if(dir === 'left' && direction !== 'right') nextDirection = 'left';
-        if(dir === 'right' && direction !== 'left') nextDirection = 'right';
-    };
-    window.handleTouchEnd = () => {};
-
-    // --- Audio System (Synthesizer) ---
-    function initAudio() {
-        if(isAudioInit) return;
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
-        isAudioInit = true;
-    }
-
-    function playTone(freq, type, duration, vol) {
-        if(!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(vol * gameState.sfxVol, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-    }
-
-    function playStartSound() {
-        playTone(440, 'square', 0.1, 0.3);
-        setTimeout(() => playTone(880, 'square', 0.2, 0.3), 100);
-    }
-
-    function playEatSound() {
-        playTone(1200, 'sine', 0.1, 0.2);
-    }
-
-    function playDieSound() {
-        playTone(150, 'sawtooth', 0.5, 0.5);
-        setTimeout(() => playTone(100, 'sawtooth', 0.5, 0.5), 200);
-    }
-
-    function playPauseSound() {
-        playTone(300, 'triangle', 0.1, 0.2);
-    }
-
-    let bgmInterval;
-    function startBackgroundMusic() {
-        if(!audioCtx) return;
-        // Simple noir bassline
-        const notes = [110, 110, 130, 110, 98, 98, 110, 130];
-        let idx = 0;
-        
-        if(bgmInterval) clearInterval(bgmInterval);
-        
-        bgmInterval = setInterval(() => {
-            if(gameState.paused) return;
-            playTone(notes[idx], 'triangle', 0.4, gameState.musicVol * 0.5);
-            idx = (idx + 1) % notes.length;
-        }, 500);
-    }
-
-    function stopBackgroundMusic() {
-        if(bgmInterval) clearInterval(bgmInterval);
-    }
-
-    // --- MOVE STRIKE Game Logic ---
-    let strikeState = {};
-    
-    function initStrikeGame() {
-        const W = canvas.width;
-        const H = canvas.height;
-        
-        strikeState = {
-            player: { x: W/2, y: H*0.8, w: 28, h: 36, speed: 4, iframes: 0 },
-            bullets: [],
-            enemies: [],
-            particles: [],
-            stars: [],
-            score: 0,
-            lives: 3,
-            wave: 1,
-            frame: 0,
-            fireTimer: 0,
-            waveTimer: 0,
-            waveActive: false,
-            keys: {}
-        };
-        
-        // Create stars
-        for (let i = 0; i < 80; i++) {
-            strikeState.stars.push({ 
-                x: Math.random()*W, 
-                y: Math.random()*H, 
-                r: Math.random()*1.2+0.3, 
-                sp: Math.random()*0.3+0.1 
-            });
-        }
-        
-        spawnWave(1);
-        
-        // Input handlers
-        document.addEventListener('keydown', handleStrikeKeydown);
-        document.addEventListener('keyup', handleStrikeKeyup);
-    }
-    
-    function handleStrikeKeydown(e) { strikeState.keys[e.key] = true; }
-    function handleStrikeKeyup(e) { strikeState.keys[e.key] = false; }
-    
-    function spawnWave(w) {
-        const count = 3 + w * 2;
-        const cols = Math.min(count, 6);
-        const rows = Math.ceil(count / cols);
-        let spawned = 0;
-        const W = canvas.width;
-        
-        for (let r = 0; r < rows && spawned < count; r++) {
-            for (let c = 0; c < cols && spawned < count; c++) {
-                const type = w >= 3 && Math.random() < 0.25 ? 'tank' : (w >= 2 && Math.random() < 0.3 ? 'fast' : 'basic');
-                strikeState.enemies.push({
-                    x: (c + 0.5) * (W / cols),
-                    y: -60 - r * 70,
-                    w: type === 'tank' ? 34 : 26,
-                    h: type === 'tank' ? 28 : 22,
-                    hp: type === 'tank' ? 3 : 1,
-                    maxHp: type === 'tank' ? 3 : 1,
-                    speed: (type === 'fast' ? 1.8 : 1.1) + w * 0.15,
-                    type,
-                    angle: 0,
-                    shootTimer: Math.random() * 120,
-                    bullets: []
-                });
-                spawned++;
-            }
-        }
-    }
-    
-    function updateStrikeGame() {
-        const W = canvas.width;
-        const H = canvas.height;
-        const s = strikeState;
-        
-        s.frame++;
-        ctx.clearRect(0, 0, W, H);
-        
-        // Background
-        ctx.fillStyle = '#050508';
-        ctx.fillRect(0, 0, W, H);
-        
-        // Stars
-        for (const star of s.stars) {
-            star.y += star.sp;
-            if (star.y > H) { star.y = 0; star.x = Math.random()*W; }
-            ctx.fillStyle = `rgba(245,197,24,${0.2 + star.r * 0.25})`;
-            ctx.beginPath(); ctx.arc(star.x, star.y, star.r, 0, Math.PI*2); ctx.fill();
-        }
-        
-        // Player movement
-        const sp = s.player.speed;
-        if (s.keys['ArrowLeft'] || s.keys['a'] || s.keys['A']) s.player.x = Math.max(s.player.w/2, s.player.x - sp);
-        if (s.keys['ArrowRight'] || s.keys['d'] || s.keys['D']) s.player.x = Math.min(W - s.player.w/2, s.player.x + sp);
-        if (s.keys['ArrowUp'] || s.keys['w'] || s.keys['W']) s.player.y = Math.max(60, s.player.y - sp);
-        if (s.keys['ArrowDown'] || s.keys['s'] || s.keys['S']) s.player.y = Math.min(H - 30, s.player.y + sp);
-        
-        // Auto fire
-        s.fireTimer++;
-        if (s.fireTimer >= 10) {
-            s.bullets.push({ x: s.player.x, y: s.player.y - 18, vy: -10 });
-            s.fireTimer = 0;
-        }
-        
-        if (s.player.iframes > 0) s.player.iframes--;
-        
-        // Update bullets
-        for (let i = s.bullets.length - 1; i >= 0; i--) {
-            const b = s.bullets[i];
-            b.y += b.vy;
-            if (b.y < -10) { s.bullets.splice(i, 1); continue; }
-            ctx.fillStyle = '#f5c518';
-            ctx.shadowColor = '#f5c51860';
-            ctx.shadowBlur = 8;
-            ctx.fillRect(b.x - 1.5, b.y - 6, 3, 12);
-            ctx.shadowBlur = 0;
-        }
-        
-        // Update enemies
-        for (let ei = s.enemies.length - 1; ei >= 0; ei--) {
-            const e = s.enemies[ei];
-            e.y += e.speed;
-            e.angle = Math.sin(s.frame * 0.05 + ei) * 12 * (Math.PI/180);
-            
-            if (e.type !== 'basic') {
-                e.shootTimer--;
-                if (e.shootTimer <= 0) {
-                    const dx = s.player.x - e.x, dy = s.player.y - e.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    e.bullets.push({ x: e.x, y: e.y + 12, vx: (dx/dist)*3.5, vy: (dy/dist)*3.5 });
-                    e.shootTimer = e.type === 'fast' ? 60 : 90;
-                }
-            }
-            
-            // Enemy bullets
-            for (let bi = e.bullets.length - 1; bi >= 0; bi--) {
-                const eb = e.bullets[bi];
-                eb.x += eb.vx; eb.y += eb.vy;
-                if (eb.y > H+10 || eb.x < -10 || eb.x > W+10) { e.bullets.splice(bi, 1); continue; }
-                
-                ctx.fillStyle = '#ff6020';
-                ctx.shadowColor = '#ff602060';
-                ctx.shadowBlur = 6;
-                ctx.beginPath(); ctx.arc(eb.x, eb.y, 3.5, 0, Math.PI*2); ctx.fill();
-                ctx.shadowBlur = 0;
-                
-                if (s.player.iframes === 0) {
-                    const dx = eb.x - s.player.x, dy = eb.y - s.player.y;
-                    if (Math.abs(dx) < 14 && Math.abs(dy) < 18) {
-                        e.bullets.splice(bi, 1);
-                        s.lives--;
-                        s.player.iframes = 90;
-                        if (s.lives <= 0) { gameOverStrike(); return; }
-                    }
-                }
-            }
-            
-            if (e.y > H + 40) { s.enemies.splice(ei, 1); continue; }
-            
-            // Collision with player bullets
-            let hit = false;
-            for (let bi = s.bullets.length - 1; bi >= 0; bi--) {
-                const b = s.bullets[bi];
-                const dx = b.x - e.x, dy = b.y - e.y;
-                if (Math.abs(dx) < e.w/2 + 2 && Math.abs(dy) < e.h/2 + 2) {
-                    s.bullets.splice(bi, 1);
-                    e.hp--;
-                    if (e.hp <= 0) {
-                        s.score += e.type === 'tank' ? 30 : e.type === 'fast' ? 20 : 10;
-                        scoreEl.innerText = `Score: ${s.score}`;
-                        s.enemies.splice(ei, 1);
-                        hit = true; break;
-                    }
-                }
-            }
-            
-            // Draw enemy
-            if (!hit) {
-                ctx.save(); 
-                ctx.translate(e.x, e.y); 
-                ctx.rotate(e.angle); 
-                ctx.translate(-e.x, -e.y);
-                
-                ctx.fillStyle = e.type === 'tank' ? '#1e1e1e' : (e.type === 'fast' ? '#181818' : '#161616');
-                ctx.beginPath();
-                if (e.type === 'tank') {
-                    ctx.moveTo(0, 14); ctx.lineTo(-14, -4); ctx.lineTo(-8, -14); ctx.lineTo(8, -14); ctx.lineTo(14, -4);
-                } else if (e.type === 'fast') {
-                    ctx.moveTo(0, 11); ctx.lineTo(-10, -4); ctx.lineTo(0, -11); ctx.lineTo(10, -4);
-                } else {
-                    ctx.moveTo(0, 11); ctx.lineTo(-10, -3); ctx.lineTo(-6, -11); ctx.lineTo(6, -11); ctx.lineTo(10, -3);
-                }
-                ctx.closePath(); ctx.fill();
-                ctx.strokeStyle = '#f5c518'; ctx.lineWidth = 1; ctx.stroke();
-                
-                ctx.restore();
-            }
-            
-            // Collision with player
-            if (!hit && s.player.iframes === 0) {
-                const dx = e.x - s.player.x, dy = e.y - s.player.y;
-                if (Math.abs(dx) < (e.w + s.player.w)/2 && Math.abs(dy) < (e.h + s.player.h)/2) {
-                    s.lives--;
-                    s.player.iframes = 90;
-                    if (s.lives <= 0) { gameOverStrike(); return; }
-                }
-            }
-        }
-        
-        // Draw player
-        const p = s.player;
-        if (p.iframes === 0 || Math.floor(s.frame/4) % 2 === 0) {
-            ctx.save();
-            ctx.translate(p.x, p.y);
-            ctx.fillStyle = '#1a1a1a';
-            ctx.beginPath(); ctx.moveTo(0, -18); ctx.lineTo(8, 6); ctx.lineTo(0, 2); ctx.lineTo(-8, 6); ctx.closePath(); ctx.fill();
-            ctx.strokeStyle = '#f5c518'; ctx.lineWidth = 1.2; ctx.stroke();
-            ctx.fillStyle = '#f5c518';
-            ctx.beginPath(); ctx.moveTo(-14, 2); ctx.lineTo(-8, -4); ctx.lineTo(-8, 8); ctx.closePath(); ctx.fill();
-            ctx.beginPath(); ctx.moveTo(14, 2); ctx.lineTo(8, -4); ctx.lineTo(8, 8); ctx.closePath(); ctx.fill();
-            ctx.restore();
-        }
-        
-        // Wave management
-        if (s.enemies.length === 0 && !s.waveActive) {
-            s.waveActive = true;
-            s.waveTimer = 90;
-        }
-        if (s.waveActive) {
-            s.waveTimer--;
-            if (s.waveTimer <= 0) {
-                s.wave++;
-                spawnWave(s.wave);
-                s.waveActive = false;
-            }
-        }
-    }
-    
-    function gameOverStrike() {
-        gameState.running = false;
-        alert(`GAME OVER\nScore: ${strikeState.score}\nWave: ${strikeState.wave}`);
-        closeGame();
-    }
-    
-    // Override gameLoop for Strike
-    const originalGameLoop = gameLoop;
-    gameLoop = function(timestamp) {
-        if (!gameState.running) return;
-        if (gameState.paused) {
-            animationFrameId = requestAnimationFrame(gameLoop);
-            return;
-        }
-        
-        if (window.currentGame === 'strike') {
-            updateStrikeGame();
-        } else {
-            updateSnakeGame(timestamp);
-        }
-        
-        animationFrameId = requestAnimationFrame(gameLoop);
-    };
-
-</script>
-</body>
+    <script src="game.js"></script>
+  </body>
 </html>
