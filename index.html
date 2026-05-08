@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Movement: Black Run — браузерный нуар-шутер в жёлто-чёрном стиле сети Movement."
+    />
+    <title>Movement: Black Run</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-noise" aria-hidden="true"></div>
+
+    <main class="game-shell">
+      <section class="game-panel" aria-label="Movement: Black Run">
+        <div class="topbar">
+          <div>
+            <p class="kicker">Games Move представляет</p>
+            <h1>Movement: Black Run</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="ghost-button" id="pauseButton" type="button">Пауза</button>
+            <button class="primary-button" id="settingsButton" type="button">Меню</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="gameCanvas" width="960" height="540" aria-label="Игровое поле Movement: Black Run"></canvas>
+
+          <div class="start-screen" id="startScreen">
+            <p class="kicker">жёлтый свет против чёрного неба</p>
+            <h2>Выживи в воздушном коридоре Movement</h2>
+            <p>
+              Сбивай «Стервятников», уворачивайся от «Молний», собирай круги M и
+              прокачивай оружие. Зелёный M даёт XP до 5, белый M усиливает урон,
+              жёлтый M меняет тип оружия.
+            </p>
+            <button class="primary-button large" id="startButton" type="button">Начать вылет</button>
+          </div>
+
+          <div class="game-over" id="gameOver" hidden>
+            <p class="kicker">сигнал потерян</p>
+            <h2>Город снова погас</h2>
+            <p id="finalScore">Счёт: 0</p>
+            <button class="primary-button large" id="restartButton" type="button">Новый вылет</button>
+          </div>
+        </div>
+
+        <div class="hud" aria-label="Показатели игры">
+          <div><span>Пилот</span><strong id="pilotName">Runner</strong></div>
+          <div><span>Очки</span><strong id="scoreValue">0</strong></div>
+          <div><span>Оружие</span><strong id="weaponValue">Vulture Splitter</strong></div>
+          <div><span>XP</span><strong id="xpValue">0 / 5</strong></div>
+          <div><span>Урон</span><strong id="damageValue">1</strong></div>
+        </div>
+      </section>
+
+      <aside class="side-panel" aria-label="Справка по игре">
+        <div class="brand-card">
+          <span class="logo-mark">M</span>
+          <div>
+            <p class="kicker">Network callsign</p>
+            <h2>Move is for Money</h2>
+          </div>
+        </div>
+
+        <section>
+          <h3>Апгрейды M</h3>
+          <ul class="legend-list">
+            <li><span class="token yellow-token">M</span> жёлтый — меняет оружие</li>
+            <li><span class="token white-token">M</span> белый — добавляет урон</li>
+            <li><span class="token green-token">M</span> зелёный — +1 XP, максимум 5</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Враги</h3>
+          <ul class="enemy-list">
+            <li><strong>Стервятник</strong> — ряды лёгких угловатых истребителей.</li>
+            <li><strong>Жёлтая молния</strong> — быстрый зигзаг с режущим следом.</li>
+            <li><strong>Монолит</strong> — тяжёлый танк с 4 HP и жёлтыми трещинами.</li>
+            <li><strong>Триада</strong> — бомбер с тремя пульсирующими пушками.</li>
+            <li><strong>Призрак</strong> — полупрозрачное крыло с тонким контуром.</li>
+          </ul>
+        </section>
+
+        <p class="hint">
+          В меню можно сменить имя, раскладку, громкость музыки и эффектов. Звуки
+          сделаны синтезатором в духе космической аркады — без сторонних аудиофайлов.
+        </p>
+      </aside>
+    </main>
+
+    <dialog class="settings-modal" id="settingsModal" aria-labelledby="settingsTitle">
+      <form method="dialog" class="settings-card">
+        <div class="settings-head">
+          <div>
+            <p class="kicker">настройки вылета</p>
+            <h2 id="settingsTitle">Меню пилота</h2>
+          </div>
+          <button class="icon-button" value="close" aria-label="Закрыть меню">×</button>
+        </div>
+
+        <label class="field">
+          Имя профиля
+          <input id="profileNameInput" maxlength="18" autocomplete="nickname" />
+        </label>
+
+        <label class="field">
+          Раскладка управления
+          <select id="controlSchemeSelect">
+            <option value="wasd">WASD + Space</option>
+            <option value="arrows">Стрелки + Space</option>
+            <option value="mouse">Мышь + ЛКМ</option>
+          </select>
+        </label>
+
+        <label class="range-field">
+          <span>Музыка</span>
+          <input id="musicVolumeInput" type="range" min="0" max="100" value="45" />
+          <strong id="musicVolumeLabel">45%</strong>
+        </label>
+
+        <label class="range-field">
+          <span>Эффекты</span>
+          <input id="sfxVolumeInput" type="range" min="0" max="100" value="70" />
+          <strong id="sfxVolumeLabel">70%</strong>
+        </label>
+
+        <div class="toggle-row">
+          <label><input id="musicMuteInput" type="checkbox" /> Выключить музыку</label>
+          <label><input id="sfxMuteInput" type="checkbox" /> Выключить эффекты</label>
+        </div>
+
+        <div class="settings-actions">
+          <button class="ghost-button" id="resetButton" type="button">Сбросить прогресс</button>
+          <button class="primary-button" value="close">Готово</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="game.js"></script>
+  </body>
+</html>
